@@ -1,0 +1,28 @@
+services:
+
+  # 1. 백엔드 서비스
+  backend:
+    build: ./Backend  # ./Backend/Dockerfile 을 찾아 실행
+    container_name: opinionmap-backend
+    env_file:
+      - ./Backend/.env # ./Backend/.env 파일 사용
+    restart: always
+    networks:
+      - opinionmap-network # 내부 네트워크에 연결
+
+  # 2. 프론트엔드(Nginx) 서비스
+  frontend:
+    build: ./Front  # ./Front/Dockerfile 을 찾아 실행
+    container_name: opinionmap-frontend
+    ports:
+      - "80:80"     # EC2의 80번 포트를 Nginx 80번 포트에 연결
+    depends_on:
+      - backend     # 백엔드가 먼저 실행된 후 프론트 실행
+    restart: always
+    networks:
+      - opinionmap-network # 내부 네트워크에 연결
+
+# 서비스 간 통신을 위한 가상 네트워크 생성
+networks:
+  opinionmap-network:
+    driver: bridge
