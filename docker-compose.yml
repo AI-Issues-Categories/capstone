@@ -7,7 +7,14 @@ services:
       dockerfile: Dockerfile.node  # Node + TS 백엔드용 Dockerfile 사용
     container_name: opinionmap-backend
     env_file:
-      - ./backend/.env # ./backend/.env 파일 사용
+      - ./backend/.env # 기본 키들은 여기서 로드(OPENAI 등). RDS 사용 시 이 파일의 DATABASE_URL을 사용합니다.
+    ports:
+      - "8000:8000" # 로컬에서 직접 백엔드 헬스 체크 및 API 호출 가능
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
     restart: always
     networks:
       - opinionmap-network # 내부 네트워크에 연결
@@ -26,7 +33,26 @@ services:
     networks:
       - opinionmap-network # 내부 네트워크에 연결
 
+  # 3. 데이터베이스(PostgreSQL) - 로컬 개발용
+  db:
+    image: postgres:15-alpine
+    container_name: opinionmap-db
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+      - POSTGRES_DB=appdb
+    volumes:
+      - opinionmap-pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" # 필요 시 외부에서 접근
+    restart: always
+    networks:
+      - opinionmap-network
+
 # 서비스 간 통신을 위한 가상 네트워크 생성
 networks:
   opinionmap-network:
     driver: bridge
+
+volumes:
+  opinionmap-pgdata:

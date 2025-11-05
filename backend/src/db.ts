@@ -8,7 +8,11 @@ const DATABASE_URL = process.env.DATABASE_URL;
 
 let pool: Pool | null = null;
 if (DATABASE_URL) {
-  pool = new Pool({ connectionString: DATABASE_URL, ssl: getSSL() });
+  pool = new Pool({
+    connectionString: DATABASE_URL,
+    ssl: getSSL(),
+    connectionTimeoutMillis: 10000, // fail fast if DB is unreachable
+  });
 }
 
 function getSSL() {
@@ -25,13 +29,19 @@ const memoryStore = new Map<string, AnalysisResult>();
 
 export async function initDb() {
   if (!pool) return;
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS analyses (
-      id TEXT PRIMARY KEY,
-      data JSONB NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-  `);
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS analyses (
+        id TEXT PRIMARY KEY,
+        data JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+  } catch (err) {
+    console.warn('[DB] Failed to initialize DB, falling back to in-memory store:', (err as any)?.message);
+    // Fall back to in-memory to keep server usable
+    pool = null;
+  }
 }
 
 export async function saveAnalysis(result: AnalysisResult) {
