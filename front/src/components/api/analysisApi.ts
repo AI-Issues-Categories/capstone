@@ -1,5 +1,5 @@
 /**
- * OpinionMap Analysis API
+ * 이슈맵 Analysis API
  * FastAPI Backend Integration
  * 
  * Backend should be running at: http://localhost:8000
@@ -105,6 +105,25 @@ export async function saveAnalysis(analysisResult: AnalysisResult): Promise<void
     });
   } catch (error) {
     console.error('Save analysis error:', error);
+    throw error;
+  }
+}
+
+/**
+ * List saved analyses for dashboards (pagination supported)
+ */
+export async function listAnalyses(page = 1, pageSize = 20): Promise<{ page: number; pageSize: number; items: AnalysisResult[]; }> {
+  try {
+    const url = new URL(`${API_BASE_URL}/api/analyses/all`);
+    url.searchParams.set('page', String(page));
+    url.searchParams.set('pageSize', String(pageSize));
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      throw new Error('Failed to list analyses');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('List analyses error:', error);
     throw error;
   }
 }

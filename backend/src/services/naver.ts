@@ -14,20 +14,30 @@ export async function searchNaverBlog(query: string, clientId?: string, clientSe
   url.searchParams.set('display', String(display));
   url.searchParams.set('sort', 'sim');
 
-  const res = await request(url.toString(), {
-    method: 'GET',
-    headers: {
-      'X-Naver-Client-Id': clientId,
-      'X-Naver-Client-Secret': clientSecret,
-    },
-  });
-  if (res.statusCode !== 200) return [];
-  const json = (await res.body.json()) as any;
-  const items = (json.items ?? []) as any[];
-  return items.map((it) => ({
-    title: it.title?.replace(/<[^>]+>/g, '') ?? 'Untitled',
-    url: it.link,
-    snippet: it.description?.replace(/<[^>]+>/g, '') ?? '',
-    postdate: it.postdate,
-  }));
+  const attempts = 2;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await request(url.toString(), {
+        method: 'GET',
+        headers: {
+          'X-Naver-Client-Id': clientId,
+          'X-Naver-Client-Secret': clientSecret,
+        },
+        headersTimeout: 5000,
+        bodyTimeout: 5000,
+      } as any);
+      if (res.statusCode !== 200) continue;
+      const json = (await res.body.json()) as any;
+      const items = (json.items ?? []) as any[];
+      return items.map((it) => ({
+        title: it.title?.replace(/<[^>]+>/g, '') ?? 'Untitled',
+        url: it.link,
+        snippet: it.description?.replace(/<[^>]+>/g, '') ?? '',
+        postdate: it.postdate,
+      }));
+    } catch {
+      await new Promise((r) => setTimeout(r, 300));
+    }
+  }
+  return [];
 }

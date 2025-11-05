@@ -199,7 +199,7 @@ export interface Translations {
 
 export const translations: Record<Language, Translations> = {
   ko: {
-    appName: 'OpinionMap',
+    appName: '이슈맵',
     favorites: '내 관심 이슈',
     issueAnalysis: '이슈 분석',
     home: '홈',
@@ -337,10 +337,10 @@ export const translations: Record<Language, Translations> = {
     showingDocs: '개 문서 표시 중',
     noDocuments: '관련 문서가 없습니다',
     
-    helpTitle: 'OpinionMap 사용 가이드',
+  helpTitle: '이슈맵 사용 가이드',
     helpDesc: '이슈에 대한 다양한 의견을 쉽게 확인하는 방법',
-    whatIsOpinionMap: '🎯 OpinionMap이란?',
-    whatIsOpinionMapDesc: '뉴스, 유튜브, 블로그에서 같은 이슈에 대한 다양한 의견을 자동으로 모아서 "찬성", "반대", "대안" 등으로 정리해드립니다. 한 번에 모든 관점을 볼 수 있어요!',
+  whatIsOpinionMap: '🎯 이슈맵이란?',
+  whatIsOpinionMapDesc: '뉴스, 유튜브, 블로그에서 같은 이슈에 대한 다양한 의견을 자동으로 모아서 "찬성", "반대", "대안" 등으로 정리해드립니다. 한 번에 모든 관점을 볼 수 있어요!',
     howToUse1: '관심있는 이슈 찾기',
     howToUse1Desc: '홈 화면에서 현재 이슈를 확인하거나 검색창에 키워드를 입력하세요.',
     howToUse2: '의견 분포 확인하기',

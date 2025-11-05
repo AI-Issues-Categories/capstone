@@ -255,7 +255,7 @@ function AppContent() {
       <footer className="bg-white border-t border-gray-200 mt-20">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-sm text-gray-600">
-            <p>© 2025 OpinionMap - 캡스톤 디자인 프로젝트</p>
+            <p>© 2025 {t.appName} - 캡스톤 디자인 프로젝트</p>
             <p className="mt-1 text-xs text-gray-500">
               이 플랫폼은 여론 분석을 위한 교육용 목적으로 제작되었습니다.
             </p>

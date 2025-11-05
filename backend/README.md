@@ -7,6 +7,7 @@ REST API for analysis that the frontend expects.
   - POST `/api/analyze` – Analyze content via OpenAI; enrich with YouTube & Naver blogs; store to DB
   - GET `/api/analysis/:id` – Retrieve a saved analysis
   - POST `/api/analysis/save` – Save an analysis payload
+  - GET `/api/analyses/all` – List saved analyses (pagination)
 
 ## Quick start
 
@@ -50,6 +51,7 @@ docker run --env-file .env -p 8000:8000 capstone-backend
 ## Notes
 - When `DATABASE_URL` is defined, the server will auto-create a table `analyses` to store JSON results.
 - External sources are best-effort: missing API keys will simply yield fewer opinion sources.
+- The analyze endpoint performs a two-stage process: (1) quick filter/validation (rejects spam/non-news), (2) full analysis & external source grounding.
 
 ## Connect to AWS RDS from local machine
 

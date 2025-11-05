@@ -1,7 +1,7 @@
-# OpinionMap Backend API 구현 가이드
+# 이슈맵 Backend API 구현 가이드
 
 ## 개요
-OpinionMap의 백엔드는 FastAPI + PostgreSQL + pgvector로 구성됩니다.
+이슈맵의 백엔드는 FastAPI + PostgreSQL + pgvector로 구성됩니다.
 사용자가 입력한 뉴스나 블로그 글을 OpenAI API로 분석하고, 인터넷에서 관련 의견을 찾아 구조화합니다.
 
 > 💡 **참고**: 실제 분석 결과 예시를 확인하려면 [ANALYSIS_EXAMPLES.md](./ANALYSIS_EXAMPLES.md) 파일을 참고하세요.  
