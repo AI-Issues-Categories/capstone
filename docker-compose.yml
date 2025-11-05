@@ -2,17 +2,21 @@ services:
 
   # 1. 백엔드 서비스
   backend:
-    build: ./Backend  # ./Backend/Dockerfile 을 찾아 실행
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.node  # Node + TS 백엔드용 Dockerfile 사용
     container_name: opinionmap-backend
     env_file:
-      - ./Backend/.env # ./Backend/.env 파일 사용
+      - ./backend/.env # ./backend/.env 파일 사용
     restart: always
     networks:
       - opinionmap-network # 내부 네트워크에 연결
 
   # 2. 프론트엔드(Nginx) 서비스
   frontend:
-    build: ./Front  # ./Front/Dockerfile 을 찾아 실행
+    build:
+      context: ./front
+      dockerfile: Dockerfile  # 프론트용 Dockerfile (멀티스테이지: build -> nginx)
     container_name: opinionmap-frontend
     ports:
       - "80:80"     # EC2의 80번 포트를 Nginx 80번 포트에 연결
