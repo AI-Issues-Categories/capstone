@@ -20,6 +20,7 @@ cp .env.example .env
 
 - `OPENAI_API_KEY` (required)
 - `YOUTUBE_API_KEY` (optional)
+- `NEWSAPI_KEY` (optional; NewsAPI.org for news articles)
 - `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET` (optional)
 - `DATABASE_URL` (optional; PostgreSQL, e.g. AWS RDS)
 

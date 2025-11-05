@@ -8,6 +8,7 @@ import { saveAnalysis, getAnalysis, initDb } from './db.js';
 import { searchYouTube } from './services/youtube.js';
 import { searchNaverBlog } from './services/naver.js';
 import { analyzeWithOpenAI } from './services/openai.js';
+import { searchNews } from './services/news.js';
 
 dotenv.config();
 
@@ -45,14 +46,16 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
 
     // External sources (best-effort if keys provided)
     const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-    const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID;
+  const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID;
     const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET;
+  const NEWSAPI_KEY = process.env.NEWSAPI_KEY;
 
     const query = content?.slice(0, 80) || body.url || 'AI 정책 논의';
 
-    const [yt, nb] = await Promise.all([
+    const [yt, nb, nw] = await Promise.all([
       searchYouTube(query, YOUTUBE_API_KEY, 5),
       searchNaverBlog(query, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET, 5),
+      searchNews(query, NEWSAPI_KEY, 5, (body.language ?? 'ko')),
     ]);
 
     const youtubeSources: OpinionSource[] = yt.map((i) => ({
@@ -75,6 +78,16 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
       relevanceScore: 0.7,
     }));
 
+    const newsSources: OpinionSource[] = nw.map((i) => ({
+      title: i.title,
+      url: i.url,
+      source: i.sourceName || 'News',
+      sourceType: 'news',
+      snippet: i.snippet,
+      publishedDate: i.publishedAt,
+      relevanceScore: 0.75,
+    }));
+
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) {
       return res.status(500).json({ detail: 'OPENAI_API_KEY is not configured on the server' });
@@ -84,6 +97,7 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
     const result = await analyzeWithOpenAI(OPENAI_API_KEY, draftReq, {
       youtube: youtubeSources,
       blogs: blogSources,
+      news: newsSources,
     });
 
     // ensure analysisId/analyzedAt

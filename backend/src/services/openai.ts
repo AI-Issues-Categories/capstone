@@ -4,6 +4,7 @@ import type { AnalysisRequest, AnalysisResult, OpinionSource } from '../types.js
 export interface AnalyzeContextSources {
   youtube: OpinionSource[];
   blogs: OpinionSource[];
+  news: OpinionSource[];
 }
 
 export async function analyzeWithOpenAI(apiKey: string, req: AnalysisRequest, sources: AnalyzeContextSources): Promise<AnalysisResult> {
@@ -35,6 +36,7 @@ Content:\n${contentText}
 You may also use the following external sources already fetched to enrich opinions (do not invent links; you can include provided ones with reasonable relevanceScore 0-1):
 YouTube sources: ${JSON.stringify(sources.youtube)}
 Blog sources: ${JSON.stringify(sources.blogs)}
+News sources: ${JSON.stringify(sources.news)}
 
 Return ONLY the JSON. Do not include markdown.`;
 
